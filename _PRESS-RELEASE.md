@@ -17,28 +17,28 @@ Once the project moves into development, the press release can be used as a touc
  -->
  
 ## Heading ##
-  > Name the product in a way the reader (i.e. your target customers) will understand.
+  > 3D Maze Game
 
 ## Sub-Heading ##
-  > Describe who the market for the product is and what benefit they get. One sentence only underneath the title.
+  > Players wanting to solve mazes from a first-person perspective.
 
 ## Summary ##
-  > Give a summary of the product and the benefit. Assume the reader will not read anything else so make this paragraph good.
+  > 3D Maze Game allows users to immerse themselves inside of maze to explore the challenges of solving them from a first person perspective.
 
 ## Problem ##
-  > Describe the problem your product solves.
+  > Solving a maze from an overhead view is not the same experience as being in the maze.  Being in the maze, creates a different set of circumstances to navigate, testing memory, patterns, and planning.
 
 ## Solution ##
-  > Describe how your product elegantly solves the problem.
+  > This game immerses the player into the maze and allows for an exploration of the world of the maze.
 
 ## Quote from You ##
-  > A quote from a spokesperson in your company.
+  > 3D Maze Game literally drops you into the maze.  You can move anywhere you like, you are only bound by the confines of the maze itself.
 
 ## How to Get Started ##
-  > Describe how easy it is to get started.
+  > Join the maze solving madness at www.AwesomeWebsiteToBeNamedLater.com.
 
 ## Customer Quote ##
-  > Provide a quote from a hypothetical customer that describes how they experienced the benefit.
+  > I have so much fun playing 3D Maze Game
 
 ## Closing and Call to Action ##
-  > Wrap it up and give pointers where the reader should go next.
+  > Sign up today at www.AwesomeWebsiteToBeNamedLater.com.
