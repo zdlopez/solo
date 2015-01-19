@@ -53,3 +53,10 @@ section.jumbotron h1 {
   float: right;
   width: 50px;
 }
+
+.gameArea {
+  background-color: green;
+
+  height: 50%;
+  width: 50%;
+}

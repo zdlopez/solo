@@ -1,12 +1,17 @@
 'use strict';
 
-angular.module('201412Solo', ['ngAnimate', 'ngTouch', 'ngSanitize', 'ui.router', 'ngMaterial'])
+angular.module('appMaze', ['ngAnimate', 'ngTouch', 'ngSanitize', 'ui.router', 'ngMaterial'])
   .config(function ($stateProvider, $urlRouterProvider) {
     $stateProvider
       .state('home', {
         url: '/',
         templateUrl: 'app/main/main.html',
         controller: 'MainCtrl'
+      })
+      .state('game', {
+        url: '/game',
+        templateUrl: 'app/game/game.html',
+        controller: 'gameController'
       });
 
     $urlRouterProvider.otherwise('/');

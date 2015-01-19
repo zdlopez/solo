@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('201412Solo')
+angular.module('appMaze')
   .controller('MainCtrl', function ($scope) {
     
   });
