@@ -1,9 +1,7 @@
 {
   "name": "201412Solo",
   "version": "0.0.0",
-  "dependencies": {
-    "three-first-person-controls": "^0.2.1"
-  },
+  "dependencies": {},
   "devDependencies": {
     "gulp": "~3.8.10",
     "gulp-autoprefixer": "~2.0.0",

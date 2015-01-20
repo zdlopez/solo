@@ -1,34 +1,9 @@
 'use strict';
 
-// var THREE = require('three.js');
-
-// // Add the plugin
-// require('three-first-person-controls')(THREE);
-
-// requirejs.config({
-//     //By default load any module IDs from js/lib
-//     baseUrl: '../npm_modules',
-//     //except, if the module ID starts with "app",
-//     //load it from the js/app directory. paths
-//     //config is relative to the baseUrl, and
-//     //never includes a ".js" extension since
-//     //the paths config could be for a directory.
-//     paths: {
-//         app: '../app'
-//     }
-// });
-
-// // Start the main app logic.
-// requirejs(['three-first-person-controls'],
-// function   ($) {
-//     //jQuery, canvas and the app/sub module are all
-//     //loaded and can be used here now.
-// });
-
 angular.module('appMaze')
   .controller('gameController', function ($scope, mazes) {
     angular.extend($scope, mazes);
-    $scope.render();
+    //$scope.render();
     
   })
   .factory('mazes', function($http){
@@ -46,53 +21,6 @@ angular.module('appMaze')
 
     ];
 
-    mazes.render = function(){
-      var cell = 0;
-
-      for(var row = 0; row < mazes.n; row++){
-        for(var col = 0; col < mazes.n; col++){
-          cell = mazes.maze[row][col];
-          var wall;
-          
-          //top
-          wall = cell & 1;
-          
-
-          if(wall === 1){
-            //has top wall
-            console.log('cell ', row, col, 'has a top wall');
-          }
-
-          //right 
-          wall = cell & 2;
-
-          if(wall === 2){
-            //has right wall
-            console.log('cell ', row, col, 'has a right wall');
-          }
-
-          //bottom
-          wall = cell & 4;
-          
-
-          if(wall === 4){
-            //has bottom wall
-            console.log('cell ', row, col, 'has a bottom wall');
-          }
-
-          //left
-          wall = cell & 8;
-
-          if(wall === 8){
-            //has left wall
-            console.log('cell ', row, col, 'has a right wall');
-          }
-
-
-
-        }
-      }
-    };
 
     mazes.go = function(){
       console.log('i am going');
@@ -113,7 +41,7 @@ angular.module('appMaze')
         LOOKSPEED = 0.075,
         NUMAI = 5;
 
-      var t = THREE,scene, cam, renderer, keyboard, controls, clock, projector, model, skin;
+      var t = THREE,scene, cam, renderer, keyboard, controls, clock, model, skin;
       var runAnim = true, mouse = { x: 0, y: 0 };
 
 
@@ -121,7 +49,6 @@ angular.module('appMaze')
 
 
         clock = new t.Clock(); // A high-performance timer used to calculate the time between rendering frames in order to smooth animation
-        projector = new t.Projector(); // A helper class for projecting 2D rays (on the screen) into 3D rays (in the virtual world)
         scene = new t.Scene(); // The "world" environment. Holds all other objects.
         scene.fog = new t.FogExp2(0xD6F1FF, 0.0005); // Add fog to the world. Helps with depth perception. Params are color (in hex) and density
         keyboard = new THREEx.KeyboardState();
@@ -131,18 +58,9 @@ angular.module('appMaze')
         cam.position.x = 0 - mazes.n/2;
         cam.position.z = 0 - mazes.n/2;
         scene.add(cam); // Add the camera to the scene
-       
-        // Camera moves with mouse, flies around with WASD/arrow keys
-        // controls = new THREE.FirstPersonControls(cam); // Handles camera control
-        // controls.movementSpeed = MOVESPEED; // How fast the player can walk around
-        // controls.lookSpeed = LOOKSPEED; // How fast the player can look around with the mouse
-        // controls.lookVertical = false; // Don't allow the player to look up or down. This is a temporary fix to keep people from flying
-        // controls.noFly = true; // Don't allow hitting R or F to go up or down
-       
-        // World objects
+ 
         setupScene(); // Adds physical objects to the world. Described later
        
-        // Handle drawing as WebGL (faster than Canvas but less supported by browsers)
         renderer = new t.WebGLRenderer();
         renderer.setSize(WIDTH, HEIGHT); // Give the renderer the canvas size explicitly
 
@@ -253,6 +171,7 @@ angular.module('appMaze')
         function render() {
           //controls.update(delta); // Move camera
           update();
+         // console.log(cam.position.get());
           renderer.render(scene, cam);
 
         }
