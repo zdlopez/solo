@@ -78,10 +78,8 @@ angular.module('appMaze')
         //var units = mapW;
        
         // Geometry: floor
-        var floor = new Physijs.BoxMesh(
-            new t.CubeGeometry(mazes.n * UNITSIZE + UNITSIZE, 10, mazes.n * UNITSIZE + UNITSIZE),
-            Physijs.createMaterial(
-              new t.MeshLambertMaterial({color: 0xEDCBA0}, 0.8, 0.1))
+        var floor = new t.Mesh(
+            new t.BoxGeometry(mazes.n * UNITSIZE + UNITSIZE, 10, mazes.n * UNITSIZE + UNITSIZE),new t.MeshLambertMaterial({color: 0xEDCBA0})
         );
         floor.position.x = UNITSIZE * 0.5 * mazes.n;
         floor.position.z = UNITSIZE * 0.5 * mazes.n;
@@ -94,12 +92,11 @@ angular.module('appMaze')
             var bottomWall = new t.BoxGeometry(UNITSIZE, WALLHEIGHT, WALLTHICKNESS);
             var rightWall = new t.BoxGeometry(WALLTHICKNESS, WALLHEIGHT, UNITSIZE);
             var leftWall = new t.BoxGeometry(WALLTHICKNESS, WALLHEIGHT, UNITSIZE);
-            var materials = Physijs.createMaterial(
-              new t.MeshLambertMaterial({color: 0xff0000}, 0.8, 0.1));
-            var tWall = new Physijs.BoxMesh(topWall, materials);
-            var bWall = new Physijs.BoxMesh(bottomWall, materials);
-            var rWall = new Physijs.BoxMesh(rightWall, materials);
-            var lWall = new Physijs.BoxMesh(leftWall, materials);
+            var materials = new t.MeshLambertMaterial({color: 0xff0000});
+            var tWall = new t.Mesh(topWall, materials);
+            var bWall = new t.Mesh(bottomWall, materials);
+            var rWall = new t.Mesh(rightWall, materials);
+            var lWall = new t.Mesh(leftWall, materials);
             var cell = mazes.maze[row][col];
             var wall;
             
@@ -193,7 +190,7 @@ angular.module('appMaze')
           // local transformations
           // move forwards/backwards/left/right
           if ( keyboard.pressed("W") || keyboard.pressed("up") )
-            cam.translateZ( -moveDistance );
+            cam.translateZ( - moveDistance );
           if ( keyboard.pressed("S") || keyboard.pressed("down") )
             cam.translateZ(  moveDistance );
           if ( keyboard.pressed("A") || keyboard.pressed("left"))
