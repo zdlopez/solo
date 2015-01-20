@@ -167,13 +167,13 @@ angular.module('appMaze')
         scene.add(floor);
        
         // Geometry: walls
-        var topBottomWall = new t.BoxGeometry(UNITSIZE, WALLHEIGHT, WALLTHICKNESS);
-        var rightLeftWall = new t.BoxGeometry(WALLTHICKNESS, WALLHEIGHT, UNITSIZE);
-        var materials = new t.MeshLambertMaterial({color: 0xff0000});
-        var tbWall = new t.Mesh(topBottomWall, materials);
-        var rlWall = new t.Mesh(rightLeftWall, materials);
         for (var row = 0; row < mazes.n; row++) {
           for (var col = 0; col < mazes.n; col++) {
+            var topBottomWall = new t.BoxGeometry(UNITSIZE, WALLHEIGHT, WALLTHICKNESS);
+            var rightLeftWall = new t.BoxGeometry(WALLTHICKNESS, WALLHEIGHT, UNITSIZE);
+            var materials = new t.MeshLambertMaterial({color: 0xff0000});
+            var tbWall = new t.Mesh(topBottomWall, materials);
+            var rlWall = new t.Mesh(rightLeftWall, materials);
             var cell = mazes.maze[row][col];
             var wall;
             
@@ -284,23 +284,12 @@ angular.module('appMaze')
           // if ( keyboard.pressed("F") )
           //   cam.rotateOnAxis( new THREE.Vector3(1,0,0), -rotateAngle);
           
-          if ( keyboard.pressed("Z") )
-          {
-            cam.position.set(0,25.1,0);
-            cam.rotation.set(0,0,0);
-          }
+          // if ( keyboard.pressed("Z") )
+          // {
+          //   cam.position.set(0,25.1,0);
+          //   cam.rotation.set(0,0,0);
+          // }
           
-          // var relativeCameraOffset = new THREE.Vector3(0,50,200);
-          // var cameraOffset = relativeCameraOffset.applyMatrix4( MovingCube.matrixWorld );
-          // camera.position.x = cameraOffset.x;
-          // camera.position.y = cameraOffset.y;
-          // camera.position.z = cameraOffset.z;
-          // camera.lookAt( MovingCube.position );
-          
-          //camera.updateMatrix();
-          //camera.updateProjectionMatrix();
-              
-          // stats.update();
         }
 
 
