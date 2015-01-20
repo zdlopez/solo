@@ -1,5 +1,30 @@
 'use strict';
 
+// var THREE = require('three.js');
+
+// // Add the plugin
+// require('three-first-person-controls')(THREE);
+
+requirejs.config({
+    //By default load any module IDs from js/lib
+    baseUrl: '../../npm_modules',
+    //except, if the module ID starts with "app",
+    //load it from the js/app directory. paths
+    //config is relative to the baseUrl, and
+    //never includes a ".js" extension since
+    //the paths config could be for a directory.
+    paths: {
+        app: '../app'
+    }
+});
+
+// Start the main app logic.
+requirejs(['three-first-person-controls'],
+function   ($) {
+    //jQuery, canvas and the app/sub module are all
+    //loaded and can be used here now.
+});
+
 angular.module('appMaze')
   .controller('gameController', function ($scope, mazes) {
     angular.extend($scope, mazes);
@@ -82,6 +107,7 @@ angular.module('appMaze')
         ASPECT = WIDTH / HEIGHT,
         UNITSIZE = 240,
         WALLTHICKNESS = 20,
+        WALLOFFSET = UNITSIZE/2 - WALLTHICKNESS/2,
         WALLHEIGHT = UNITSIZE / 3,
         MOVESPEED = 100,
         LOOKSPEED = 0.075,
@@ -105,7 +131,7 @@ angular.module('appMaze')
         scene.add(cam); // Add the camera to the scene
        
         // Camera moves with mouse, flies around with WASD/arrow keys
-        controls = new t.FirstPersonControls(cam); // Handles camera control
+        controls = new THREE.FirstPersonControls(cam); // Handles camera control
         controls.movementSpeed = MOVESPEED; // How fast the player can walk around
         controls.lookSpeed = LOOKSPEED; // How fast the player can look around with the mouse
         controls.lookVertical = false; // Don't allow the player to look up or down. This is a temporary fix to keep people from flying
@@ -158,9 +184,10 @@ angular.module('appMaze')
 
             if(wall === 1){
               //has top wall
-
-
-
+              tbWall.position.x = (row - mazes.n/2) * UNITSIZE;
+              tbWall.position.y = WALLHEIGHT/2;
+              tbWall.position.z = (col - mazes.n/2) * UNITSIZE + WALLOFFSET;
+              scene.add(tbWall);
               console.log('cell ', row, col, 'has a top wall');
             }
 
@@ -169,6 +196,10 @@ angular.module('appMaze')
 
             if(wall === 2){
               //has right wall
+              rlWall.position.x = (row - mazes.n/2) * UNITSIZE + WALLOFFSET;
+              rlWall.position.y = WALLHEIGHT/2;
+              rlWall.position.z = (col - mazes.n/2) * UNITSIZE;
+              scene.add(rlWall);
               console.log('cell ', row, col, 'has a right wall');
             }
 
@@ -178,6 +209,10 @@ angular.module('appMaze')
 
             if(wall === 4){
               //has bottom wall
+              tbWall.position.x = (row - mazes.n/2) * UNITSIZE;
+              tbWall.position.y = WALLHEIGHT/2;
+              tbWall.position.z = (col - mazes.n/2) * UNITSIZE - WALLOFFSET;
+              scene.add(tbWall);
               console.log('cell ', row, col, 'has a bottom wall');
             }
 
@@ -185,16 +220,15 @@ angular.module('appMaze')
             wall = cell & 8;
 
             if(wall === 8){
+
               //has left wall
+              rlWall.position.x = (row - mazes.n/2) * UNITSIZE - WALLOFFSET;
+              rlWall.position.y = WALLHEIGHT/2;
+              rlWall.position.z = (col - mazes.n/2) * UNITSIZE;
+              scene.add(rlWall);
               console.log('cell ', row, col, 'has a right wall');
             }
-            // if (map[i][j]) {
-            //   var wall = new t.Mesh(cube, materials[map[i][j]-1]);
-            //   wall.position.x = (i - mazes.n/2) * UNITSIZE;
-            //   wall.position.y = WALLHEIGHT/2;
-            //   wall.position.z = (j - mazes.n/2) * UNITSIZE;
-            //   scene.add(wall);
-            // }
+          
           }
         }
 
@@ -206,8 +240,32 @@ angular.module('appMaze')
           directionalLight2.position.set( -0.5, -1, -0.5 );
           scene.add( directionalLight2 );
         }
+        init();
+        // Helper function for browser frames
+        function animate() {
+          if (runAnim) {
+            requestAnimationFrame(animate);
+          }
+          render();
+        }
+        animate();
 
-    };
+
+        function render() {
+          var delta = clock.getDelta(), speed = delta * BULLETMOVESPEED;
+          var aispeed = delta * MOVESPEED;
+          controls.update(delta); // Move camera
+          renderer.render(scene, cam);
+
+        }
+
+
+        
+        };
+
+          
+
+
 
 
     return mazes;
