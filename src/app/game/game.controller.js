@@ -57,6 +57,7 @@ angular.module('appMaze')
         cam.position.y = UNITSIZE * .2; // Raise the camera off the ground
         cam.position.x = UNITSIZE/2;
         cam.position.z = UNITSIZE/2;  //start at bottom left/facing north
+        cam.rotateOnAxis(new t.Vector3(0, 1, 0), -90)
         scene.add(cam); // Add the camera to the scene
  
         setupScene(); // Adds physical objects to the world. Described later

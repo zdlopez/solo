@@ -1,4 +1,4 @@
 ## TODO
 
-* add collision detection for walls
 * default down key press/take out scroll bar
+* positioning of rendered maze.
