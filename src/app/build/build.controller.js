@@ -2,13 +2,18 @@
 
 angular.module('appMaze')
   .controller('buildController', function ($scope, builds) {
-    angular.extend($scope, mazes);
-    //$scope.render();
-    //$scope.score = mazes.timer.value;
+    angular.extend($scope, builds);
     
+    $scope.func = function(userChoice){
+      $scope.searchQuery = '';
+      console.log('this working', userChoice);
+    }
+    //console.log($scope.choice);
   })
   .factory('builds', function($http){
-    
+    var builds = {};
+
+    return builds;
 
   });
 

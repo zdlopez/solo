@@ -1,7 +1,7 @@
 <div layout="vertical" layout-fill ng-controller="gameController">
 <header ng-include="'components/navbar/navbar.html'"></header>
   <div class="gameArea">
-    <div ng-click="go()">Click to start </div><span> Elapsed time {{ score }}</span>
+    <div ng-click="go()">Click to start </div><span ng-model='score'> Elapsed time {{ score }}</span>
   </div>
 
 </div>
