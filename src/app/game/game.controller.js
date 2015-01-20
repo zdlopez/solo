@@ -41,7 +41,7 @@ angular.module('appMaze')
         LOOKSPEED = 0.075,
         NUMAI = 5;
 
-      var t = THREE,scene, cam, renderer, keyboard, controls, clock, model, skin;
+      var t = THREE,scene, cam, renderer, keyboard, controls, clock, model, skin, walls = [];
       var runAnim = true, mouse = { x: 0, y: 0 };
 
 
@@ -109,6 +109,7 @@ angular.module('appMaze')
               tWall.position.x = (mazes.n - row) * UNITSIZE;
               tWall.position.y = WALLHEIGHT/2;
               tWall.position.z = (mazes.n - col) * UNITSIZE - WALLOFFSET;
+              walls.push(tWall);
               scene.add(tWall);
               console.log('cell ', row, col, 'has a top wall');
             }
@@ -121,6 +122,7 @@ angular.module('appMaze')
               rWall.position.x = (mazes.n - row) * UNITSIZE - WALLOFFSET;
               rWall.position.y = WALLHEIGHT/2;
               rWall.position.z = (mazes.n - col) * UNITSIZE;
+              walls.push(rWall);
               scene.add(rWall);
               console.log('cell ', row, col, 'has a right wall');
             }
@@ -134,6 +136,7 @@ angular.module('appMaze')
               bWall.position.x = (mazes.n - row) * UNITSIZE;
               bWall.position.y = WALLHEIGHT/2;
               bWall.position.z = (mazes.n - col) * UNITSIZE - WALLOFFSET;
+              walls.push(bWall);
               scene.add(bWall);
               console.log('cell ', row, col, 'has a bottom wall');
             }
@@ -147,6 +150,7 @@ angular.module('appMaze')
               lWall.position.x = (mazes.n - row) * UNITSIZE - WALLOFFSET;
               lWall.position.y = WALLHEIGHT/2;
               lWall.position.z = (mazes.n - col) * UNITSIZE;
+              walls.push(lWall);
               scene.add(lWall);
               console.log('cell ', row, col, 'has a right wall');
             }
@@ -177,6 +181,7 @@ angular.module('appMaze')
           //controls.update(delta); // Move camera
           update();
           console.log(cam.position);
+          detectCollision();
           renderer.render(scene, cam);
 
         }
@@ -190,13 +195,23 @@ angular.module('appMaze')
           // local transformations
           // move forwards/backwards/left/right
           if ( keyboard.pressed("W") || keyboard.pressed("up") )
-            cam.translateZ( - moveDistance );
+            if(!detectCollision()){
+              cam.translateZ( - moveDistance );
+            }
           if ( keyboard.pressed("S") || keyboard.pressed("down") )
-            cam.translateZ(  moveDistance );
+            if(!detectCollision()){
+              cam.translateZ(  moveDistance );
+            }
+            
           if ( keyboard.pressed("A") || keyboard.pressed("left"))
-            cam.rotateOnAxis( new THREE.Vector3(0,1,0), rotateAngle);
+           // if(!detectCollision){
+              cam.rotateOnAxis( new THREE.Vector3(0,1,0), rotateAngle); 
+            //}
+
           if ( keyboard.pressed("D") || keyboard.pressed("right"))
-            cam.rotateOnAxis( new THREE.Vector3(0,1,0), -rotateAngle);
+            //if(!detectCollision){
+              cam.rotateOnAxis( new THREE.Vector3(0,1,0), -rotateAngle);
+            //}
           // rotate left/right/up/down
           // var rotation_matrix = new THREE.Matrix4().identity();
           // if ( keyboard.pressed("A") )
@@ -214,6 +229,23 @@ angular.module('appMaze')
           //   cam.rotation.set(0,0,0);
           // }
           
+        }
+
+        function detectCollision() {
+          //var vector = cam.target.clone().subSelf( cam.position ).normalize();
+          var vector = new THREE.Vector3( 0, 0, -1 );
+          vector.applyQuaternion( cam.quaternion );
+          //var ray = new THREE.Ray(cam.position, vector);
+          var ray = new THREE.Raycaster(cam.position, vector);
+          var intersects = ray.intersectObjects(scene.children, true);
+
+          if (intersects.length > 0) {
+            if (intersects[0].distance < 5) {
+              console.log('collision', intersects);
+              return true;
+            }
+          }
+
         }
 
 
