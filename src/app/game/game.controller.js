@@ -4,11 +4,14 @@ angular.module('appMaze')
   .controller('gameController', function ($scope, mazes) {
     angular.extend($scope, mazes);
     //$scope.render();
+    //$scope.score = mazes.timer.value;
     
   })
   .factory('mazes', function($http){
     var mazes = {};
     mazes.n = 4; //will be a user val;
+    var scoring = 0;
+    mazes.score = scoring;
 
 
     //in the server implementation this will be 
@@ -48,6 +51,9 @@ angular.module('appMaze')
     
     */
 
+    mazes.timer = new Stopwatch();
+
+
 
     mazes.go = function(){
       console.log('i am going');
@@ -74,7 +80,7 @@ angular.module('appMaze')
 
       var init = function(){
 
-
+        mazes.timer.start();
         clock = new t.Clock(); // A high-performance timer used to calculate the time between rendering frames in order to smooth animation
         scene = new t.Scene(); // The "world" environment. Holds all other objects.
         scene.fog = new t.FogExp2(0xD6F1FF, 0.0005); // Add fog to the world. Helps with depth perception. Params are color (in hex) and density
@@ -82,7 +88,7 @@ angular.module('appMaze')
         // Set up camera so we know from where to render the scene
         cam = new t.PerspectiveCamera(60, ASPECT, 1, 10000); // Field Of Viw, aspect ratio, near, far
         cam.position.y = UNITSIZE * .2; // Raise the camera off the ground
-        cam.position.x = UNITSIZE/2;
+        cam.position.x = UNITSIZE/4;
         cam.position.z = UNITSIZE * (mazes.n -1) + UNITSIZE/2;  //start at bottom left/facing north
         //cam.rotateOnAxis(new t.Vector3(0, 1, 0), -90)
         scene.add(cam); // Add the camera to the scene
@@ -233,6 +239,9 @@ angular.module('appMaze')
 
         function render() {
           //controls.update(delta); // Move camera
+          scoring = mazes.timer.update();
+          mazes.score = scoring;
+          console.log('score is ', mazes.score);
           update();
           //console.log(cam.position);
           detectCollision();
@@ -250,7 +259,6 @@ angular.module('appMaze')
           var moveDistance = 200 * delta; // 200 pixels per second
           var rotateAngle = Math.PI / 2 * delta;   // pi/2 radians (90 degrees) per second
           
-          // local transformations
           // move forwards/backwards/left/right
           if ( keyboard.pressed("W") || keyboard.pressed("up") )
             if(!detectCollision()){
@@ -262,38 +270,16 @@ angular.module('appMaze')
             }
             
           if ( keyboard.pressed("A") || keyboard.pressed("left"))
-           // if(!detectCollision){
               cam.rotateOnAxis( new THREE.Vector3(0,1,0), rotateAngle); 
-            //}
 
           if ( keyboard.pressed("D") || keyboard.pressed("right"))
-            //if(!detectCollision){
               cam.rotateOnAxis( new THREE.Vector3(0,1,0), -rotateAngle);
-            //}
-          // rotate left/right/up/down
-          // var rotation_matrix = new THREE.Matrix4().identity();
-          // if ( keyboard.pressed("A") )
-          //   cam.rotateOnAxis( new THREE.Vector3(0,1,0), rotateAngle);
-          // if ( keyboard.pressed("D") )
-          //   cam.rotateOnAxis( new THREE.Vector3(0,1,0), -rotateAngle);
-          // if ( keyboard.pressed("R") )
-          //   cam.rotateOnAxis( new THREE.Vector3(1,0,0), rotateAngle);
-          // if ( keyboard.pressed("F") )
-          //   cam.rotateOnAxis( new THREE.Vector3(1,0,0), -rotateAngle);
-          
-          // if ( keyboard.pressed("Z") )
-          // {
-          //   cam.position.set(0,25.1,0);
-          //   cam.rotation.set(0,0,0);
-          // }
           
         }
 
         function detectCollision() {
-          //var vector = cam.target.clone().subSelf( cam.position ).normalize();
           var vector = new THREE.Vector3( 0, 0, -1 );
           vector.applyQuaternion( cam.quaternion );
-          //var ray = new THREE.Ray(cam.position, vector);
           var ray = new THREE.Raycaster(cam.position, vector);
           var intersects = ray.intersectObjects(scene.children, true);
 
