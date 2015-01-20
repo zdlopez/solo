@@ -14,10 +14,10 @@ angular.module('appMaze')
     //in the server implementation this will be 
     //an http call
     mazes.maze = [
-    [15, 14, 13, 12],
-    [11, 10, 9, 8],
-    [7, 6, 5, 4],
-    [3, 2, 1, 0]
+    [11, 14, 13, 12],
+    [10, 10, 9, 8],
+    [10, 6, 5, 4],
+    [10, 2, 1, 0]
 
     ];
 
@@ -55,8 +55,8 @@ angular.module('appMaze')
         // Set up camera so we know from where to render the scene
         cam = new t.PerspectiveCamera(60, ASPECT, 1, 10000); // Field Of Viw, aspect ratio, near, far
         cam.position.y = UNITSIZE * .2; // Raise the camera off the ground
-        cam.position.x = 0 - mazes.n/2;
-        cam.position.z = 0 - mazes.n/2;
+        cam.position.x = UNITSIZE/2;
+        cam.position.z = UNITSIZE/2;  //start at bottom left/facing north
         scene.add(cam); // Add the camera to the scene
  
         setupScene(); // Adds physical objects to the world. Described later
@@ -65,7 +65,7 @@ angular.module('appMaze')
         renderer.setSize(WIDTH, HEIGHT); // Give the renderer the canvas size explicitly
 
         // Add the canvas to the document
-        renderer.domElement.style.backgroundColor = '#D6F1FF'; // Make it easier to see that the canvas was added. Also this is the sky color
+        renderer.domElement.style.backgroundColor = 0xCCFFFF; // Make it easier to see that the canvas was added. Also this is the sky color
         document.body.appendChild(renderer.domElement); // Add the canvas to the document
        
 
@@ -78,20 +78,28 @@ angular.module('appMaze')
         //var units = mapW;
        
         // Geometry: floor
-        var floor = new t.Mesh(
-            new t.CubeGeometry(mazes.n * UNITSIZE, 10, mazes.n * UNITSIZE),
-            new t.MeshLambertMaterial({color: 0xEDCBA0})
+        var floor = new Physijs.BoxMesh(
+            new t.CubeGeometry(mazes.n * UNITSIZE + UNITSIZE, 10, mazes.n * UNITSIZE + UNITSIZE),
+            Physijs.createMaterial(
+              new t.MeshLambertMaterial({color: 0xEDCBA0}, 0.8, 0.1))
         );
+        floor.position.x = UNITSIZE * 0.5 * mazes.n;
+        floor.position.z = UNITSIZE * 0.5 * mazes.n;
         scene.add(floor);
        
         // Geometry: walls
         for (var row = 0; row < mazes.n; row++) {
           for (var col = 0; col < mazes.n; col++) {
-            var topBottomWall = new t.BoxGeometry(UNITSIZE, WALLHEIGHT, WALLTHICKNESS);
-            var rightLeftWall = new t.BoxGeometry(WALLTHICKNESS, WALLHEIGHT, UNITSIZE);
-            var materials = new t.MeshLambertMaterial({color: 0xff0000});
-            var tbWall = new t.Mesh(topBottomWall, materials);
-            var rlWall = new t.Mesh(rightLeftWall, materials);
+            var topWall = new t.BoxGeometry(UNITSIZE, WALLHEIGHT, WALLTHICKNESS);
+            var bottomWall = new t.BoxGeometry(UNITSIZE, WALLHEIGHT, WALLTHICKNESS);
+            var rightWall = new t.BoxGeometry(WALLTHICKNESS, WALLHEIGHT, UNITSIZE);
+            var leftWall = new t.BoxGeometry(WALLTHICKNESS, WALLHEIGHT, UNITSIZE);
+            var materials = Physijs.createMaterial(
+              new t.MeshLambertMaterial({color: 0xff0000}, 0.8, 0.1));
+            var tWall = new Physijs.BoxMesh(topWall, materials);
+            var bWall = new Physijs.BoxMesh(bottomWall, materials);
+            var rWall = new Physijs.BoxMesh(rightWall, materials);
+            var lWall = new Physijs.BoxMesh(leftWall, materials);
             var cell = mazes.maze[row][col];
             var wall;
             
@@ -101,10 +109,10 @@ angular.module('appMaze')
 
             if(wall === 1){
               //has top wall
-              tbWall.position.x = (row - mazes.n/2) * UNITSIZE;
-              tbWall.position.y = WALLHEIGHT/2;
-              tbWall.position.z = (col - mazes.n/2) * UNITSIZE + WALLOFFSET;
-              scene.add(tbWall);
+              tWall.position.x = (mazes.n - row) * UNITSIZE;
+              tWall.position.y = WALLHEIGHT/2;
+              tWall.position.z = (mazes.n - col) * UNITSIZE - WALLOFFSET;
+              scene.add(tWall);
               console.log('cell ', row, col, 'has a top wall');
             }
 
@@ -113,10 +121,10 @@ angular.module('appMaze')
 
             if(wall === 2){
               //has right wall
-              rlWall.position.x = (row - mazes.n/2) * UNITSIZE + WALLOFFSET;
-              rlWall.position.y = WALLHEIGHT/2;
-              rlWall.position.z = (col - mazes.n/2) * UNITSIZE;
-              scene.add(rlWall);
+              rWall.position.x = (mazes.n - row) * UNITSIZE - WALLOFFSET;
+              rWall.position.y = WALLHEIGHT/2;
+              rWall.position.z = (mazes.n - col) * UNITSIZE;
+              scene.add(rWall);
               console.log('cell ', row, col, 'has a right wall');
             }
 
@@ -126,10 +134,10 @@ angular.module('appMaze')
 
             if(wall === 4){
               //has bottom wall
-              tbWall.position.x = (row - mazes.n/2) * UNITSIZE;
-              tbWall.position.y = WALLHEIGHT/2;
-              tbWall.position.z = (col - mazes.n/2) * UNITSIZE - WALLOFFSET;
-              scene.add(tbWall);
+              bWall.position.x = (mazes.n - row) * UNITSIZE;
+              bWall.position.y = WALLHEIGHT/2;
+              bWall.position.z = (mazes.n - col) * UNITSIZE - WALLOFFSET;
+              scene.add(bWall);
               console.log('cell ', row, col, 'has a bottom wall');
             }
 
@@ -139,10 +147,10 @@ angular.module('appMaze')
             if(wall === 8){
 
               //has left wall
-              rlWall.position.x = (row - mazes.n/2) * UNITSIZE - WALLOFFSET;
-              rlWall.position.y = WALLHEIGHT/2;
-              rlWall.position.z = (col - mazes.n/2) * UNITSIZE;
-              scene.add(rlWall);
+              lWall.position.x = (mazes.n - row) * UNITSIZE - WALLOFFSET;
+              lWall.position.y = WALLHEIGHT/2;
+              lWall.position.z = (mazes.n - col) * UNITSIZE;
+              scene.add(lWall);
               console.log('cell ', row, col, 'has a right wall');
             }
           
@@ -171,7 +179,7 @@ angular.module('appMaze')
         function render() {
           //controls.update(delta); // Move camera
           update();
-         // console.log(cam.position.get());
+          console.log(cam.position);
           renderer.render(scene, cam);
 
         }
