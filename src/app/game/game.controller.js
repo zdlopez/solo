@@ -113,7 +113,7 @@ angular.module('appMaze')
         LOOKSPEED = 0.075,
         NUMAI = 5;
 
-      var t = THREE,scene, cam, renderer, controls, clock, projector, model, skin;
+      var t = THREE,scene, cam, renderer, keyboard, controls, clock, projector, model, skin;
       var runAnim = true, mouse = { x: 0, y: 0 };
 
 
@@ -124,7 +124,7 @@ angular.module('appMaze')
         projector = new t.Projector(); // A helper class for projecting 2D rays (on the screen) into 3D rays (in the virtual world)
         scene = new t.Scene(); // The "world" environment. Holds all other objects.
         scene.fog = new t.FogExp2(0xD6F1FF, 0.0005); // Add fog to the world. Helps with depth perception. Params are color (in hex) and density
-       
+        keyboard = new THREEx.KeyboardState();
         // Set up camera so we know from where to render the scene
         cam = new t.PerspectiveCamera(60, ASPECT, 1, 10000); // Field Of Viw, aspect ratio, near, far
         cam.position.y = UNITSIZE * .2; // Raise the camera off the ground
@@ -252,8 +252,55 @@ angular.module('appMaze')
 
         function render() {
           //controls.update(delta); // Move camera
+          update();
           renderer.render(scene, cam);
 
+        }
+
+        function update()
+        {
+          var delta = clock.getDelta(); // seconds.
+          var moveDistance = 200 * delta; // 200 pixels per second
+          var rotateAngle = Math.PI / 2 * delta;   // pi/2 radians (90 degrees) per second
+          
+          // local transformations
+          // move forwards/backwards/left/right
+          if ( keyboard.pressed("W") || keyboard.pressed("up") )
+            cam.translateZ( -moveDistance );
+          if ( keyboard.pressed("S") || keyboard.pressed("down") )
+            cam.translateZ(  moveDistance );
+          if ( keyboard.pressed("A") || keyboard.pressed("left"))
+            cam.rotateOnAxis( new THREE.Vector3(0,1,0), rotateAngle);
+          if ( keyboard.pressed("D") || keyboard.pressed("right"))
+            cam.rotateOnAxis( new THREE.Vector3(0,1,0), -rotateAngle);
+          // rotate left/right/up/down
+          // var rotation_matrix = new THREE.Matrix4().identity();
+          // if ( keyboard.pressed("A") )
+          //   cam.rotateOnAxis( new THREE.Vector3(0,1,0), rotateAngle);
+          // if ( keyboard.pressed("D") )
+          //   cam.rotateOnAxis( new THREE.Vector3(0,1,0), -rotateAngle);
+          // if ( keyboard.pressed("R") )
+          //   cam.rotateOnAxis( new THREE.Vector3(1,0,0), rotateAngle);
+          // if ( keyboard.pressed("F") )
+          //   cam.rotateOnAxis( new THREE.Vector3(1,0,0), -rotateAngle);
+          
+          if ( keyboard.pressed("Z") )
+          {
+            cam.position.set(0,25.1,0);
+            cam.rotation.set(0,0,0);
+          }
+          
+          // var relativeCameraOffset = new THREE.Vector3(0,50,200);
+          // var cameraOffset = relativeCameraOffset.applyMatrix4( MovingCube.matrixWorld );
+          // camera.position.x = cameraOffset.x;
+          // camera.position.y = cameraOffset.y;
+          // camera.position.z = cameraOffset.z;
+          // camera.lookAt( MovingCube.position );
+          
+          //camera.updateMatrix();
+          //camera.updateProjectionMatrix();
+              
+          // stats.update();
         }
 
 
