@@ -5,25 +5,25 @@
 // // Add the plugin
 // require('three-first-person-controls')(THREE);
 
-requirejs.config({
-    //By default load any module IDs from js/lib
-    baseUrl: '../../npm_modules',
-    //except, if the module ID starts with "app",
-    //load it from the js/app directory. paths
-    //config is relative to the baseUrl, and
-    //never includes a ".js" extension since
-    //the paths config could be for a directory.
-    paths: {
-        app: '../app'
-    }
-});
+// requirejs.config({
+//     //By default load any module IDs from js/lib
+//     baseUrl: '../npm_modules',
+//     //except, if the module ID starts with "app",
+//     //load it from the js/app directory. paths
+//     //config is relative to the baseUrl, and
+//     //never includes a ".js" extension since
+//     //the paths config could be for a directory.
+//     paths: {
+//         app: '../app'
+//     }
+// });
 
-// Start the main app logic.
-requirejs(['three-first-person-controls'],
-function   ($) {
-    //jQuery, canvas and the app/sub module are all
-    //loaded and can be used here now.
-});
+// // Start the main app logic.
+// requirejs(['three-first-person-controls'],
+// function   ($) {
+//     //jQuery, canvas and the app/sub module are all
+//     //loaded and can be used here now.
+// });
 
 angular.module('appMaze')
   .controller('gameController', function ($scope, mazes) {
@@ -128,14 +128,16 @@ angular.module('appMaze')
         // Set up camera so we know from where to render the scene
         cam = new t.PerspectiveCamera(60, ASPECT, 1, 10000); // Field Of Viw, aspect ratio, near, far
         cam.position.y = UNITSIZE * .2; // Raise the camera off the ground
+        cam.position.x = 0 - mazes.n/2;
+        cam.position.z = 0 - mazes.n/2;
         scene.add(cam); // Add the camera to the scene
        
         // Camera moves with mouse, flies around with WASD/arrow keys
-        controls = new THREE.FirstPersonControls(cam); // Handles camera control
-        controls.movementSpeed = MOVESPEED; // How fast the player can walk around
-        controls.lookSpeed = LOOKSPEED; // How fast the player can look around with the mouse
-        controls.lookVertical = false; // Don't allow the player to look up or down. This is a temporary fix to keep people from flying
-        controls.noFly = true; // Don't allow hitting R or F to go up or down
+        // controls = new THREE.FirstPersonControls(cam); // Handles camera control
+        // controls.movementSpeed = MOVESPEED; // How fast the player can walk around
+        // controls.lookSpeed = LOOKSPEED; // How fast the player can look around with the mouse
+        // controls.lookVertical = false; // Don't allow the player to look up or down. This is a temporary fix to keep people from flying
+        // controls.noFly = true; // Don't allow hitting R or F to go up or down
        
         // World objects
         setupScene(); // Adds physical objects to the world. Described later
@@ -147,9 +149,6 @@ angular.module('appMaze')
         // Add the canvas to the document
         renderer.domElement.style.backgroundColor = '#D6F1FF'; // Make it easier to see that the canvas was added. Also this is the sky color
         document.body.appendChild(renderer.domElement); // Add the canvas to the document
-       
-        // Track mouse position (set mouse.x and mouse.y to pointer coordinates) so we know where to shoot
-        document.addEventListener( 'mousemove', onDocumentMouseMove, false );
        
 
      
@@ -172,7 +171,7 @@ angular.module('appMaze')
         var rightLeftWall = new t.BoxGeometry(WALLTHICKNESS, WALLHEIGHT, UNITSIZE);
         var materials = new t.MeshLambertMaterial({color: 0xff0000});
         var tbWall = new t.Mesh(topBottomWall, materials);
-        var rlWall = new t.Mesh(rightLeftWall, meterials);
+        var rlWall = new t.Mesh(rightLeftWall, materials);
         for (var row = 0; row < mazes.n; row++) {
           for (var col = 0; col < mazes.n; col++) {
             var cell = mazes.maze[row][col];
@@ -252,9 +251,7 @@ angular.module('appMaze')
 
 
         function render() {
-          var delta = clock.getDelta(), speed = delta * BULLETMOVESPEED;
-          var aispeed = delta * MOVESPEED;
-          controls.update(delta); // Move camera
+          //controls.update(delta); // Move camera
           renderer.render(scene, cam);
 
         }
