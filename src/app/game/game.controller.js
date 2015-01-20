@@ -14,12 +14,39 @@ angular.module('appMaze')
     //in the server implementation this will be 
     //an http call
     mazes.maze = [
-    [11, 14, 13, 12],
-    [10, 10, 9, 8],
-    [10, 6, 5, 4],
-    [10, 2, 1, 0]
+    [15, 1, 1, 3],
+    [8, 8, 0, 2],
+    [8, 8, 0, 2],
+    [12, 4, 4, 6]
 
     ];
+
+    /* maze cell orientations
+
+    [9, 1, 1, 3],
+    [8, 0, 0, 2],
+    [8, 0, 0, 2],
+    [12, 4, 4, 6]
+
+    [9, 0, 0, 0],
+    [0, 0, 0, 0],
+    [0, 0, 0, 0],
+    [0, 0, 0, 0]
+    These are oriented to the screen
+    top, right, bottom, left
+
+    empty cell = 0;
+    top = 0001 = 1
+    right = 0010 = 2
+    bottom = 0100 = 4
+    left = 1000 = 8
+
+    top & left = 1001 = 9
+    top & right = 0011 = 3
+
+    all = 1111 = 15
+    
+    */
 
 
     mazes.go = function(){
@@ -41,7 +68,7 @@ angular.module('appMaze')
         LOOKSPEED = 0.075,
         NUMAI = 5;
 
-      var t = THREE,scene, cam, renderer, keyboard, controls, clock, model, skin, walls = [];
+      var t = THREE,scene, cam, mapCamera, renderer, keyboard, controls, clock, model, skin, walls = [];
       var runAnim = true, mouse = { x: 0, y: 0 };
 
 
@@ -56,14 +83,36 @@ angular.module('appMaze')
         cam = new t.PerspectiveCamera(60, ASPECT, 1, 10000); // Field Of Viw, aspect ratio, near, far
         cam.position.y = UNITSIZE * .2; // Raise the camera off the ground
         cam.position.x = UNITSIZE/2;
-        cam.position.z = UNITSIZE/2;  //start at bottom left/facing north
-        cam.rotateOnAxis(new t.Vector3(0, 1, 0), -90)
+        cam.position.z = UNITSIZE * (mazes.n -1) + UNITSIZE/2;  //start at bottom left/facing north
+        //cam.rotateOnAxis(new t.Vector3(0, 1, 0), -90)
         scene.add(cam); // Add the camera to the scene
+
+
+        //add overhead cam 
+
+        mapCamera = new THREE.OrthographicCamera(
+            window.innerWidth * -2,   // Left
+            window.innerWidth * 2,    // Right
+            window.innerHeight * 2,   // Top
+            window.innerHeight * -2,  // Bottom
+            -5000,                  // Near 
+            10000 );                // Far 
+          mapCamera.up = new THREE.Vector3(0,0,-1);
+          mapCamera.lookAt( new THREE.Vector3(0,-1,0) );
+          mapCamera.position.x = UNITSIZE * (mazes.n / 2 + 1);
+          mapCamera.position.z = UNITSIZE * (mazes.n / 2 + 1);
+          scene.add(mapCamera);
+
+
+
+
+
  
         setupScene(); // Adds physical objects to the world. Described later
        
         renderer = new t.WebGLRenderer();
         renderer.setSize(WIDTH, HEIGHT); // Give the renderer the canvas size explicitly
+        renderer.autoClear = false;
 
         // Add the canvas to the document
         renderer.domElement.style.backgroundColor = 0xCCFFFF; // Make it easier to see that the canvas was added. Also this is the sky color
@@ -80,7 +129,7 @@ angular.module('appMaze')
        
         // Geometry: floor
         var floor = new t.Mesh(
-            new t.BoxGeometry(mazes.n * UNITSIZE + UNITSIZE, 10, mazes.n * UNITSIZE + UNITSIZE),new t.MeshLambertMaterial({color: 0xEDCBA0})
+            new t.BoxGeometry(mazes.n * 2 * UNITSIZE + UNITSIZE, 10, mazes.n * 2 * UNITSIZE + UNITSIZE),new t.MeshLambertMaterial({color: 0xEDCBA0})
         );
         floor.position.x = UNITSIZE * 0.5 * mazes.n;
         floor.position.z = UNITSIZE * 0.5 * mazes.n;
@@ -103,13 +152,14 @@ angular.module('appMaze')
             
             //top
             wall = cell & 1;
+            console.log('top: ', wall);
             
 
             if(wall === 1){
               //has top wall
-              tWall.position.x = (mazes.n - row) * UNITSIZE;
+              tWall.position.x = (col) * UNITSIZE;
               tWall.position.y = WALLHEIGHT/2;
-              tWall.position.z = (mazes.n - col) * UNITSIZE - WALLOFFSET;
+              tWall.position.z = (row) * UNITSIZE - WALLOFFSET;
               walls.push(tWall);
               scene.add(tWall);
               console.log('cell ', row, col, 'has a top wall');
@@ -117,12 +167,13 @@ angular.module('appMaze')
 
             //right 
             wall = cell & 2;
+            console.log('right: ', wall);
 
             if(wall === 2){
               //has right wall
-              rWall.position.x = (mazes.n - row) * UNITSIZE - WALLOFFSET;
+              rWall.position.x = (col) * UNITSIZE - WALLOFFSET + UNITSIZE;
               rWall.position.y = WALLHEIGHT/2;
-              rWall.position.z = (mazes.n - col) * UNITSIZE;
+              rWall.position.z = (row) * UNITSIZE;
               walls.push(rWall);
               scene.add(rWall);
               console.log('cell ', row, col, 'has a right wall');
@@ -130,13 +181,14 @@ angular.module('appMaze')
 
             //bottom
             wall = cell & 4;
+            console.log('bottom: ', wall);
             
 
             if(wall === 4){
               //has bottom wall
-              bWall.position.x = (mazes.n - row) * UNITSIZE;
+              bWall.position.x = (col) * UNITSIZE;
               bWall.position.y = WALLHEIGHT/2;
-              bWall.position.z = (mazes.n - col) * UNITSIZE - WALLOFFSET;
+              bWall.position.z = (row) * UNITSIZE  - WALLOFFSET + UNITSIZE;
               walls.push(bWall);
               scene.add(bWall);
               console.log('cell ', row, col, 'has a bottom wall');
@@ -144,13 +196,14 @@ angular.module('appMaze')
 
             //left
             wall = cell & 8;
+            console.log('left: ', wall);
 
             if(wall === 8){
 
               //has left wall
-              lWall.position.x = (mazes.n - row) * UNITSIZE - WALLOFFSET;
+              lWall.position.x = (col) * UNITSIZE - WALLOFFSET;
               lWall.position.y = WALLHEIGHT/2;
-              lWall.position.z = (mazes.n - col) * UNITSIZE;
+              lWall.position.z = (row) * UNITSIZE;
               walls.push(lWall);
               scene.add(lWall);
               console.log('cell ', row, col, 'has a right wall');
@@ -181,9 +234,13 @@ angular.module('appMaze')
         function render() {
           //controls.update(delta); // Move camera
           update();
-          console.log(cam.position);
+          //console.log(cam.position);
           detectCollision();
+          //renderer.setViewport( WIDTH * mazes.n /2 , HEIGHT * mazes.n /2, WIDTH, HEIGHT );
+          renderer.clear();
           renderer.render(scene, cam);
+          //renderer.setViewport( .10 * WIDTH, .10 * HEIGHT, WIDTH, HEIGHT );
+          //renderer.render( scene, mapCamera );
 
         }
 
