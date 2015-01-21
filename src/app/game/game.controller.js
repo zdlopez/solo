@@ -262,7 +262,7 @@ angular.module('appMaze')
           var directionalLight1 = new t.DirectionalLight( 0xF7EFBE, 0.7 );
           directionalLight1.position.set( 0.5, 1, 0.5 );
           scene.add( directionalLight1 );
-          var directionalLight2 = new t.DirectionalLight( 0xF7EFBE, 0.5 );
+          var directionalLight2 = new t.DirectionalLight( 0xF7EFBE, 0.7 );
           directionalLight2.position.set( -0.5, -1, -0.5 );
           scene.add( directionalLight2 );
         }
