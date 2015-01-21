@@ -292,9 +292,23 @@ angular.module('appMaze')
           //renderer.render( scene, mapCamera );
 
           if (chaseCameraActive)
-            {  renderer.render( scene, cam );  }
+            {  
+              //scene.removeObject(sphere);
+              renderer.render( scene, cam );  }
             else
-            {  renderer.render( scene, mapCamera );  }
+            {  
+
+             /*
+             var radius = 30;
+             var sphereGeometry = new THREE.SphereGeometry( radius, 16, 8 );
+             var sphereMaterial = new THREE.MeshLambertMaterial( { color: 0xffd700 } );
+             var sphere = new THREE.Mesh( sphereGeometry, sphereMaterial );
+             sphere.position.x = cam.position.x;
+             sphere.position.z = cam.position.z;
+             sphere.position.y = 50
+             scene.add(sphere);
+             */
+              renderer.render( scene, mapCamera );  }
 
         }
 
@@ -336,7 +350,7 @@ angular.module('appMaze')
 
           if (intersects.length > 0) {
             if (intersects[0].distance < 5) {
-              console.log('collision', intersects);
+              console.log('collision', intersects[0]);
               return true;
             }
           }

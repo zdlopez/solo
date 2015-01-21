@@ -44,7 +44,7 @@ angular.module('appMaze')
         for(var j = 0; j < maps.length; j++){
           var temp = 0;
           var cell = maps[i][j];
-          temp = cell[0] * 4 + cell[1] * 8 + cell[2] * 1 + cell[3] * 2;
+          temp = cell[0] * 1 + cell[1] * 2 + cell[2] * 4 + cell[3] * 8;
 
           /*
           These are oriented to the screen
