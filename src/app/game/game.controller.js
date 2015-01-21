@@ -1,10 +1,29 @@
 'use strict';
 
 angular.module('appMaze')
-  .controller('gameController', function ($scope, mazes) {
+  .controller('gameController', function ($scope, mazes, builds) {
     angular.extend($scope, mazes);
+    angular.extend($scope, builds);
     //$scope.render();
     //$scope.score = mazes.timer.value;
+    $scope.func = function(userChoice){
+      $scope.choice = '';
+      $scope.n = userChoice;
+      $scope.map = $scope.newMaze(userChoice, userChoice);
+      $scope.mapTranslated = $scope.translate($scope.map);
+      $scope.maze2 = $scope.mapTranslated;
+      console.log('this working', userChoice);
+      console.log($scope.map);
+      console.log($scope.mapTranslated);
+    }
+
+    $scope.go = function(){
+      console.log('i am going');
+      mazes.maze = $scope.maze2;
+      mazes.n = $scope.n;
+      mazes.threeHelper();
+      //mazes.animate();
+    }
     
   })
   .factory('mazes', function($http){
@@ -55,11 +74,7 @@ angular.module('appMaze')
 
 
 
-    mazes.go = function(){
-      console.log('i am going');
-      mazes.threeHelper();
-      //mazes.animate();
-    }
+    
 
     mazes.threeHelper = function()
     {
@@ -74,7 +89,7 @@ angular.module('appMaze')
         LOOKSPEED = 0.075,
         NUMAI = 5;
 
-      var t = THREE,scene, cam, mapCamera, renderer, keyboard, controls, clock, model, skin, walls = [];
+      var t = THREE,scene, chaseCameraActive = true,cam, mapCamera, renderer, keyboard, controls, clock, model, skin, walls = [];
       var runAnim = true, mouse = { x: 0, y: 0 };
 
 
@@ -241,15 +256,20 @@ angular.module('appMaze')
           //controls.update(delta); // Move camera
           scoring = mazes.timer.update();
           mazes.score = scoring;
-          console.log('score is ', mazes.score);
+          //console.log('score is ', mazes.score);
           update();
           //console.log(cam.position);
           detectCollision();
           //renderer.setViewport( WIDTH * mazes.n /2 , HEIGHT * mazes.n /2, WIDTH, HEIGHT );
           renderer.clear();
-          renderer.render(scene, cam);
+          //renderer.render(scene, cam);
           //renderer.setViewport( .10 * WIDTH, .10 * HEIGHT, WIDTH, HEIGHT );
           //renderer.render( scene, mapCamera );
+
+          if (chaseCameraActive)
+            {  renderer.render( scene, cam );  }
+            else
+            {  renderer.render( scene, mapCamera );  }
 
         }
 
@@ -274,6 +294,12 @@ angular.module('appMaze')
 
           if ( keyboard.pressed("D") || keyboard.pressed("right"))
               cam.rotateOnAxis( new THREE.Vector3(0,1,0), -rotateAngle);
+
+            if ( keyboard.pressed("1") )
+              {  chaseCameraActive = true;  }
+              if ( keyboard.pressed("2") )
+              {  chaseCameraActive = false;  }
+
           
         }
 
