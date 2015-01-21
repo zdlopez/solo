@@ -15,6 +15,7 @@ angular.module('appMaze')
       console.log('this working', userChoice);
       console.log($scope.map);
       console.log($scope.mapTranslated);
+      $scope.go();
     }
 
     $scope.go = function(){
@@ -124,10 +125,6 @@ angular.module('appMaze')
           mapCamera.position.z = UNITSIZE * (mazes.n / 2 + 1);
           scene.add(mapCamera);
 
-
-
-
-
  
         setupScene(); // Adds physical objects to the world. Described later
        
@@ -147,6 +144,24 @@ angular.module('appMaze')
       // Set up the objects in the world
       function setupScene() {
         //var units = mapW;
+        if(mazes.maze === undefined){
+          mazes.n = 8;
+          mazes.maze = [
+            [9, 1, 1, 1, 3, 1, 1, 3],
+            [8, 4, 4, 4, 12, 3, 0, 2],
+            [8, 0, 0, 0, 0, 2, 0, 2],
+            [8, 0, 0, 9, 1, 2, 0, 2],
+            [9, 0, 0, 8, 0, 2, 0, 2],
+            [10, 0, 15, 0, 0, 0, 0, 2],
+            [10, 0, 2, 0, 0, 0, 0, 2],
+            [12, 4, 6, 4, 4, 4, 4, 6]
+          ];
+          /*empty cell = 0;
+          top = 0001 = 1
+          right = 0010 = 2
+          bottom = 0100 = 4
+          left = 1000 = 8*/
+        }
        
         // Geometry: floor
         var floor = new t.Mesh(
@@ -155,6 +170,8 @@ angular.module('appMaze')
         floor.position.x = UNITSIZE * 0.5 * mazes.n;
         floor.position.z = UNITSIZE * 0.5 * mazes.n;
         scene.add(floor);
+
+        
        
         // Geometry: walls
         for (var row = 0; row < mazes.n; row++) {
@@ -233,6 +250,14 @@ angular.module('appMaze')
           }
         }
 
+            var radius = 30;
+             var sphereGeometry = new THREE.SphereGeometry( radius, 16, 8 );
+             var sphereMaterial = new THREE.MeshLambertMaterial( { color: 0xffd700 } );
+             var sphere = new THREE.Mesh( sphereGeometry, sphereMaterial );
+             sphere.position.x = Math.floor(Math.random() * mazes.n * UNITSIZE);
+             sphere.position.z = Math.floor(Math.random() * mazes.n * UNITSIZE);
+             sphere.position.y = 50
+             scene.add(sphere);
         // Lighting
           var directionalLight1 = new t.DirectionalLight( 0xF7EFBE, 0.7 );
           directionalLight1.position.set( 0.5, 1, 0.5 );
