@@ -1,6 +1,9 @@
 {
   "name": "201412Solo",
   "version": "0.0.0",
+  "scripts" : {
+    "start" : "bash startup.sh"
+  },
   "dependencies": {},
   "devDependencies": {
     "gulp": "~3.8.10",
